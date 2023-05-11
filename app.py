@@ -177,7 +177,9 @@ def app():
         st.pyplot()
 
         count += 1
-
+    if count>1: 
+        st.balloons()
+        st.success('We have reached our treasure!', icon="✅")
 
 # Run the app
 if __name__ == '__main__':
