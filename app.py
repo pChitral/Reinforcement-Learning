@@ -68,6 +68,7 @@ class TreasureHuntEnv():
         self.obstacle = st.sidebar.multiselect("Select penalty positions", [
                                                (i, j) for i in range(4) for j in range(4)])
         self.reward = self.get_reward()
+
     def get_reward(self):
         reward = {}
         for i in range(4):
