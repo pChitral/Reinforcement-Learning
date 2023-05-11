@@ -156,6 +156,8 @@ def app():
 
         # Take the action and get the next observation and reward
         next_obs, reward, done, _ = env.step(action)
+        if done:
+            break
 
         # Get the next action
         next_action = agent.act(next_obs, reward, done)
