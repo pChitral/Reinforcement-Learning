@@ -61,16 +61,24 @@ class TreasureHuntEnv():
         self.action_space = np.array([0, 1, 2, 3])
         self.observation_space = np.array(
             [(i, j) for i in range(4) for j in range(4)])
-        self.state = (0, 0)  # starting state
-        self.treasure = (2, 2)  # treasure location
-        self.obstacle = [(0, 2), (1, 2), (2, 0), (3, 1)]  # obstacle location
-        self.reward = {self.treasure: 10,
-                       (0, 2): -5, (1, 2): -5, (2, 0): -5, (3, 1): -5}
-
+        self.state = st.sidebar.selectbox("Select starting position", [
+                                          (i, j) for i in range(4) for j in range(4)])
+        self.treasure = st.sidebar.selectbox("Select treasure position", [
+                                             (i, j) for i in range(4) for j in range(4)])
+        self.obstacle = st.sidebar.multiselect("Select penalty positions", [
+                                               (i, j) for i in range(4) for j in range(4)])
+        self.reward = self.get_reward()
+    def get_reward(self):
+        reward = {}
         for i in range(4):
             for j in range(4):
-                if (i, j) not in self.reward.keys():
-                    self.reward[(i, j)] = -1
+                if (i, j) in self.obstacle:
+                    reward[(i, j)] = -5
+                elif (i, j) == self.treasure:
+                    reward[(i, j)] = 10
+                else:
+                    reward[(i, j)] = -1
+        return reward
 
     def step(self, action):
         reward = self.reward.get(self.state, 0)
