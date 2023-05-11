@@ -4,135 +4,111 @@ import matplotlib.pyplot as plt
 import random
 
 
-class TreasureHuntEnv:
-    def __init__(self, grid_size=10, num_obstacles=10, num_treasures=5, treasure_reward=1):
-        self.grid_size = grid_size
-        self.num_obstacles = num_obstacles
-        self.num_treasures = num_treasures
-        self.treasure_reward = treasure_reward
-        self.grid = np.zeros((grid_size, grid_size))
-        self.agent_pos = (0, 0)
-        self.obstacle_pos = []
-        self.treasure_pos = []
-        self.generate_obstacles()
-        self.generate_treasures()
-        self.action_space = ['up', 'down', 'left', 'right']
+class TreasureHuntEnv():
+    def __init__(self):
+        self.action_space = np.array([0, 1, 2, 3])
+        self.observation_space = np.array(
+            [(i, j) for i in range(4) for j in range(4)])
+        self.state = st.sidebar.selectbox("Select starting position", [
+                                          (i, j) for i in range(4) for j in range(4)])
+        self.treasure = st.sidebar.selectbox("Select treasure position", [
+                                             (i, j) for i in range(4) for j in range(4)])
+        self.obstacle = st.sidebar.multiselect("Select penalty positions", [
+                                               (i, j) for i in range(4) for j in range(4)])
+        self.reward = self.get_reward()
 
-    def generate_obstacles(self):
-        self.obstacle_pos = []
-        for i in range(self.num_obstacles):
-            x = np.random.randint(self.grid_size)
-            y = np.random.randint(self.grid_size)
-            self.grid[x, y] = -1
-            self.obstacle_pos.append((x, y))
-
-    def generate_treasures(self):
-        self.treasure_pos = []
-        for i in range(self.num_treasures):
-            x = np.random.randint(self.grid_size)
-            y = np.random.randint(self.grid_size)
-            while self.grid[x, y] != 0 or (x, y) in self.obstacle_pos:
-                x = np.random.randint(self.grid_size)
-                y = np.random.randint(self.grid_size)
-            self.grid[x, y] = self.treasure_reward
-            self.treasure_pos.append((x, y))
-
-    def reset(self):
-        self.grid = np.zeros((self.grid_size, self.grid_size))
-        self.agent_pos = (0, 0)
-        self.generate_obstacles()
-        self.generate_treasures()
-        return self.grid, self.agent_pos
+    def get_reward(self):
+        reward = {}
+        for i in range(4):
+            for j in range(4):
+                if (i, j) in self.obstacle:
+                    reward[(i, j)] = -5
+                elif (i, j) == self.treasure:
+                    reward[(i, j)] = 10
+                else:
+                    reward[(i, j)] = -1
+        return reward
 
     def step(self, action):
-        done = False
-        reward = 0
-        if action == 'up':
-            if self.agent_pos[0] > 0:
-                self.agent_pos = (self.agent_pos[0] - 1, self.agent_pos[1])
-        elif action == 'down':
-            if self.agent_pos[0] < self.grid_size - 1:
-                self.agent_pos = (self.agent_pos[0] + 1, self.agent_pos[1])
-        elif action == 'left':
-            if self.agent_pos[1] > 0:
-                self.agent_pos = (self.agent_pos[0], self.agent_pos[1] - 1)
-        elif action == 'right':
-            if self.agent_pos[1] < self.grid_size - 1:
-                self.agent_pos = (self.agent_pos[0], self.agent_pos[1] + 1)
-        if self.agent_pos in self.obstacle_pos:
+        reward = self.reward.get(self.state, 0)
+        if self.state == self.treasure:
             done = True
-            reward = -1
-        elif self.agent_pos in self.treasure_pos:
-            self.treasure_pos.remove(self.agent_pos)
-            reward = self.treasure_reward
-            if len(self.treasure_pos) == 0:
-                done = True
-        return self.grid, self.agent_pos, reward, done
+        else:
+            done = False
+        if action == 0:
+            next_state = (self.state[0] - 1, self.state[1])
+        elif action == 1:
+            next_state = (self.state[0] + 1, self.state[1])
+        elif action == 2:
+            next_state = (self.state[0], self.state[1] + 1)
+        elif action == 3:
+            next_state = (self.state[0], self.state[1] - 1)
+        else:
+            raise ValueError("Invalid action")
+        if (next_state[0] >= 0 and next_state[0] < 4 and
+                next_state[1] >= 0 and next_state[1] < 4):
+            if next_state not in self.obstacle:
+                self.state = next_state
+        return np.array(self.state), reward, done, {}
+
+    def reset(self):
+        self.state = (0, 0)
+        return np.array(self.state)
 
     def render(self):
-        fig, ax = plt.subplots()
-        ax.imshow(self.grid, cmap='coolwarm')
-        ax.set_xticks(np.arange(self.grid_size))
-        ax.set_yticks(np.arange(self.grid_size))
-        ax.grid(color='w', linewidth=2)
-        ax.set_xticklabels([])
-        ax.set_yticklabels([])
-        for obs_pos in self.obstacle_pos:
-            rect = plt.Rectangle(obs_pos, 1, 1, color='red')
-            ax.add_patch(rect)
-        for treasure_pos in self.treasure_pos:
-            rect = plt.Rectangle(treasure_pos, 1, 1, color='green')
-            ax.add_patch(rect)
-        rect = plt.Rectangle(self.agent_pos, 1, 1, color='blue')
-        ax.add_patch(rect)
-        return fig
+        grid = np.full((4, 4), -2)
+
+        # mark the current position of the agent
+        grid[self.state] = 1
+        # mark the treasure location
+        grid[self.treasure] = 2
+        # mark the obstacle locations
+        for obs in self.obstacle:
+            grid[obs] = -1
+        # plot the grid
+        plt.imshow(grid)
+        st.pyplot()
 
 
-class RandomAgent:
+class RandomAgent():
     def __init__(self, action_space):
         self.action_space = action_space
 
-    def act(self, grid, agent_pos):
-        return np.random.choice(self.action_space)
+    def act(self, observation, reward, done):
+        return random.choice(self.action_space)
+
+    def reset(self):
+        pass
 
 
-# Creating the App
-env = TreasureHuntEnv()
-agent = RandomAgent(env.action_space)
-
-# Define a function to run the simulation for the specified number of steps
-
-
-def run_simulation(env, agent, num_steps):
-    # Render the initial state of the grid
-    fig = env.render()
-    st.pyplot(fig)
-    # Loop through the specified number of steps
-    for i in range(num_steps):
-        # Choose an action based on the current state of the grid
-        action = agent.act(env.grid, env.agent_pos)
-        # Take the chosen action and get the new state of the grid and the reward
-        grid, agent_pos, reward, done = env.step(action)
-        # Render the updated state of the grid
-        fig = env.render()
-        st.pyplot(fig)
-        # If the game is over, break out of the loop
-        if done:
-            break
-
-# Define the main function for the Streamlit app
 def main():
-    # Set the page title
-    st.set_page_config(page_title='Treasure Hunt')
-    # Set the page header
-    st.title('Treasure Hunt')
-    # Set the default agent type and number of steps
-    agent_type = st.sidebar.selectbox('Select Agent', ['Random'])
-    num_steps = st.sidebar.slider(
-        'Number of Steps', min_value=1, max_value=100, value=10, step=1)
-    # Run the simulation
-    if agent_type == 'Random':
-        run_simulation(env, agent, num_steps)
+    st.title("Treasure Hunt Game")
+    st.subheader("Using a Random Agent")
+
+    env = TreasureHuntEnv()
+    agent = RandomAgent(env.action_space)
+
+    obs = env.reset()
+    done = False
+    reward = 0  # initialize reward to 0
+    count = 1
+    while not done:
+        action = agent.act(obs, reward, done)
+        obs, reward, done, _ = env.step(action)
+
+        # render the game
+        st.write(f"**Step {count}**")
+        grid = np.full((4, 4), -2)
+        grid[obs] = 1  # mark the current position of the agent
+        grid[env.treasure] = 2  # mark the treasure location
+        for obs_loc in env.obstacle:
+            grid[obs_loc] = -1  # mark the obstacle locations
+        plt.imshow(grid, cmap='viridis')
+        st.pyplot(plt)
+
+        count += 1
+
+    st.write("🎉 Congrats! You have found the treasure!")
 
 
 if __name__ == '__main__':
