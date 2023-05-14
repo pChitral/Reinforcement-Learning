@@ -149,7 +149,7 @@ def app():
     reward = 0
     count = 1
     if st.button(":running: Lets Go!",  type="secondary", disabled=False, use_container_width=False):
-    
+
         while not done:
             # Get the agent's action
             action = agent.act(obs, reward, done)
@@ -176,11 +176,11 @@ def app():
             env.render()
             st.pyplot()
 
-
             count += 1
-        if count>1: 
+        if count > 1:
             st.balloons()
             st.success('We have reached our treasure!', icon="✅")
+
 
 # Run the app
 if __name__ == '__main__':
