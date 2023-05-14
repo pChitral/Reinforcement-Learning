@@ -5,16 +5,16 @@ This code defines a grid-world environment called TreasureHuntEnv and an agent c
 
 The TreasureHuntEnv class has the following methods:
 
-- __init__(self): Initializes the environment by defining the action space, observation space, starting state, treasure location, obstacle locations, and reward dictionary.
-- step(self, action): Executes an action in the environment and returns the next state, reward, done, and info. The next state is the result of taking the specified action in the current state. The reward is the reward received for the action. The done flag is set to True when the agent reaches the treasure, and False otherwise. The info dictionary is currently empty.
-- reset(self): Resets the environment to its initial state and returns the initial state.
-- render(self): Renders the current state of the environment as a plot using the matplotlib library.
+- `__init__(self)`: Initializes the environment by defining the action space, observation space, starting state, treasure location, obstacle locations, and reward dictionary.
+- `step(self, action)`: Executes an action in the environment and returns the next state, reward, done, and info. The next state is the result of taking the specified action in the current state. The reward is the reward received for the action. The done flag is set to True when the agent reaches the treasure, and False otherwise. The info dictionary is currently empty.
+- `reset(self)`: Resets the environment to its initial state and returns the initial state.
+- `render(self)`: Renders the current state of the environment as a plot using the matplotlib library.
 
 The RandomAgent class has the following methods:
 
-- __init__(self, action_space): Initializes the agent by defining the action space.
-- act(self, observation, reward, done): Chooses a random action from the action space.
-- reset(self): Does nothing.
+- `__init__(self, action_space)`: Initializes the agent by defining the action space.
+- `act(self, observation, reward, done)`: Chooses a random action from the action space.
+- `reset(self)`:  This method resets the agent to its initial state.
 
 The main part of the code creates an instance of the environment and the agent and runs a loop that performs actions in the environment until the agent reaches the treasure or 20 steps have been taken. In each step, the agent selects a random action, and the environment returns the next state, reward, and done flag. The state, reward, and done flag are printed, and the environment is rendered as a plot.
 

@@ -176,6 +176,7 @@ def app():
             env.render()
             st.pyplot()
 
+
             count += 1
         if count>1: 
             st.balloons()
