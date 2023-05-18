@@ -22,6 +22,24 @@ You can install these dependencies using `pip`:
 pip install streamlit matplotlib numpy optuna
 ```
 
+## Folder Structure
+
+.
+├── Agent
+│ ├── QLearningAgent.py
+│ ├── RandomAgent.py
+│ ├── **init**.py
+│ └── **pycache**
+├── CODE_OF_CONDUCT
+├── LICENSE
+├── TreasureHuntEnv
+│ ├── TreasureHuntEnv.py
+│ ├── **init**.py
+│ └── **pycache**
+├── readme.md
+├── Reinforcement_Learning.ipynb
+└── app.py
+
 ## TreasureHuntEnv
 
 This code defines a grid-world environment called TreasureHuntEnv and an agent called RandomAgent that performs random actions. The environment is a 4x4 grid where the agent starts at (0, 0) and has to find the treasure located at (2, 2). There are obstacles at positions (0, 2), (1, 2), (2, 0), and (3, 1), and the agent receives a reward of -1 for each step taken. If the agent reaches the treasure, it receives a reward of 10, and if it collides with an obstacle, it receives a reward of -5.
