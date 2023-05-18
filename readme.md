@@ -81,7 +81,7 @@ The Q-learning algorithm is a popular algorithm in reinforcement learning for so
 
 ## License
 
-This code is provided under the MIT License. See the LICENSE file for more information.
+This code is provided under the MIT License. See the [LICENSE](LICENSE) file for more information.
 
 ## Acknowledgments
 
