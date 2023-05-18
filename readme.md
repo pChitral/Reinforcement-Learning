@@ -2,6 +2,8 @@
 
 ## Demo
 
+https://github.com/pChitral/Reinforcement-Learning/assets/69043137/3f582373-73f6-4f87-a401-f9ace7521b17
+
 ## Installation
 
 To use the TreasureHuntEnv class, make sure you have the following dependencies installed:
