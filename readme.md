@@ -24,6 +24,7 @@ pip install streamlit matplotlib numpy optuna
 
 ## Folder Structure
 
+```
 .
 ├── Agent
 │ ├── QLearningAgent.py
@@ -39,6 +40,7 @@ pip install streamlit matplotlib numpy optuna
 ├── readme.md
 ├── Reinforcement_Learning.ipynb
 └── app.py
+```
 
 ## TreasureHuntEnv
 
